@@ -1,0 +1,57 @@
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+enum Role {
+  RIDER
+  DRIVER
+  ADMIN
+}
+
+model RiderProfile {
+  id           Int      @id @default(autoincrement())
+  riderId      Int      @unique           // auth-service User.id (same value)
+  role         Role     @default(RIDER)
+  firstName    String
+  lastName     String
+  email        String
+  profilePhoto String?
+  bio          String?
+  address      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model DriverProfile {
+  id           Int      @id @default(autoincrement())
+  driverId     Int      @unique          // auth-service Driver.id
+  role         Role     @default(DRIVER)
+  firstName    String
+  lastName     String
+  email        String
+  profilePhoto String?
+  bio          String?
+  address      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model AdminProfile {
+  id           Int      @id @default(autoincrement())
+  adminId       Int      @unique          // auth-service User.id (admin user)
+  role         Role     @default(ADMIN)
+  firstName    String
+  lastName     String
+  email        String
+  profilePhoto String?
+  bio          String?
+  address      String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
