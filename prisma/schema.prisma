@@ -21,6 +21,7 @@ model RiderProfile {
   lastName     String
   email        String
   profilePhoto String?
+  mobileNumber String?
   bio          String?
   address      String?
   createdAt    DateTime @default(now())
@@ -35,8 +36,10 @@ model DriverProfile {
   lastName     String
   email        String
   profilePhoto String?
+  mobileNumber String?
   bio          String?
   address      String?
+  drivingLicense String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -49,6 +52,7 @@ model AdminProfile {
   lastName     String
   email        String
   profilePhoto String?
+  mobileNumber String?
   bio          String?
   address      String?
   createdAt    DateTime @default(now())

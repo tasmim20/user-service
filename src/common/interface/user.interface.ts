@@ -7,8 +7,10 @@ export interface CreateProfileRequest {
   firstName: string;
   lastName: string;
   profilePhoto?: string;
+  mobileNumber?: string;
   bio?: string;
   address?: string;
+  drivingLicense?: string;
 }
 
 export interface CreateProfileResponse {
@@ -30,6 +32,19 @@ export interface GetProfileResponse {
   email: string;
   role: string;
   profilePhoto?: string;
+  mobileNumber?: string;
   bio?: string;
   address?: string;
+  drivingLicense?: string;
+}
+export interface UpdateProfileRequest {
+  userId: number;
+  role: string;
+  firstName?: string;
+  lastName?: string;
+  profilePhoto?: string;
+  mobileNumber?: string;
+  bio?: string;
+  address?: string;
+  drivingLicense?: string;
 }

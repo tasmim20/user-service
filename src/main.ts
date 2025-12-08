@@ -21,12 +21,6 @@ async function bootstrap() {
   // This assumes the `proto` folder is at the root level of your project
   // If the proto file is located in the "proto" folder at the root level.
 
-  console.log('USER-SERVICE BOOT:');
-  console.log('  DATABASE_URL:', process.env.DATABASE_URL);
-  console.log('  gRPC host   :', host);
-  console.log('  gRPC port   :', port);
-  console.log('  protoPath   :', userProtoPath);
-
   // Create the NestJS microservice with gRPC transport
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
     UserModule,

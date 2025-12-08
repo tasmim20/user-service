@@ -1,16 +1,20 @@
+/* eslint-disable @typescript-eslint/no-unsafe-return */
+/* eslint-disable @typescript-eslint/no-unnecessary-type-assertion */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/no-unsafe-call */
 /* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { Controller } from '@nestjs/common';
 import { GrpcMethod, RpcException } from '@nestjs/microservices';
-import { status as GrpcStatus } from '@grpc/grpc-js';
+// import { status as GrpcStatus } from '@grpc/grpc-js';
 import { UserService } from './user.service';
 import type {
   CreateProfileRequest,
   CreateProfileResponse,
-  GetProfileRequest,
   GetProfileResponse,
+  UpdateProfileRequest,
 } from './common/interface/user.interface';
+import { from, Observable } from 'rxjs';
 
 @Controller()
 export class UserController {
@@ -28,25 +32,48 @@ export class UserController {
   }
 
   @GrpcMethod('UserService', 'GetProfile')
-  async getProfileGrpc(data: GetProfileRequest): Promise<GetProfileResponse> {
-    try {
-      console.log('🟢 UserController.GetProfile called with:', data);
+  async getProfileGrpc(data: {
+    userId: number;
+    role: string;
+  }): Promise<GetProfileResponse> {
+    const { userId, role } = data;
 
-      const result = await this.userService.getProfile(data);
+    const profile = await this.userService.getProfile({ userId, role });
 
-      if (!result) {
-        console.error('Profile not found for:', data);
-        throw new RpcException({
-          code: GrpcStatus.NOT_FOUND,
-          message: 'Profile not found',
-        });
-      }
-
-      console.log('🟢 GetProfile result:', result);
-      return result;
-    } catch (error) {
-      console.error('Error in getProfileGrpc:', error);
-      throw error;
+    if (!profile) {
+      throw new RpcException('Profile not found');
     }
+
+    return profile;
+  }
+
+  @GrpcMethod('UserService', 'UpdateProfile')
+  updateProfileGrpc(
+    data: UpdateProfileRequest,
+  ): Observable<GetProfileResponse> {
+    if (!data || !data.userId || !data.role) {
+      throw new RpcException('Invalid request');
+    }
+
+    // Call the UserService method instead of this controller
+    const promise = this.userService.updateProfile(data.userId, data.role, {
+      firstName: data.firstName,
+      lastName: data.lastName,
+      profilePhoto: data.profilePhoto,
+      mobileNumber: data.mobileNumber,
+      bio: data.bio,
+      address: data.address,
+    });
+
+    return from(promise); // Convert Promise → Observable
+  }
+
+  @GrpcMethod('UserService', 'DeleteProfile')
+  async deleteProfileGrpc(data: {
+    userId: number;
+    role: string;
+  }): Promise<{ success: boolean; message: string }> {
+    const { userId, role } = data;
+    return this.userService.deleteProfile(userId, role);
   }
 }
